@@ -4,6 +4,7 @@ import { auth } from "../../lib/auth";
 import { ILoginUserPayload, IRegisterUserPayload } from "./auth.interface";
 import { prisma } from "../../lib/prisma";
 import { UserStatus } from "../../../generated/prisma/enums";
+import { TokenUtils } from "../../utils/token";
 
 const registerUser = async (payload: IRegisterUserPayload) => {
     const { name, email, password } = payload;
@@ -20,7 +21,31 @@ const registerUser = async (payload: IRegisterUserPayload) => {
         throw new AppError(status.BAD_REQUEST, "Failed to register user");
     }
 
-    return data;
+    const accessToken = TokenUtils.getAccessToken({
+        userId: data.user.id,
+        role: data.user.role,
+        name: data.user.name,
+        email: data.user.email,
+        status: data.user.status,
+        isDeleted: data.user.isDeleted,
+        emailVerified: data.user.emailVerified,
+    });
+
+    const refreshToken = TokenUtils.getRefreshToken({
+        userId: data.user.id,
+        role: data.user.role,
+        name: data.user.name,
+        email: data.user.email,
+        status: data.user.status,
+        isDeleted: data.user.isDeleted,
+        emailVerified: data.user.emailVerified,
+    });
+
+    return {
+        ...data,
+        accessToken,
+        refreshToken,
+    };
 };
 
 const loginUser = async (payload: ILoginUserPayload) => {
@@ -40,7 +65,31 @@ const loginUser = async (payload: ILoginUserPayload) => {
         throw new AppError(status.NOT_FOUND, "User is Deleted");
     };
 
-    return data;
+    const accessToken = TokenUtils.getAccessToken({
+        userId: data.user.id,
+        role: data.user.role,
+        name: data.user.name,
+        email: data.user.email,
+        status: data.user.status,
+        isDeleted: data.user.isDeleted,
+        emailVerified: data.user.emailVerified,
+    });
+
+    const refreshToken = TokenUtils.getRefreshToken({
+        userId: data.user.id,
+        role: data.user.role,
+        name: data.user.name,
+        email: data.user.email,
+        status: data.user.status,
+        isDeleted: data.user.isDeleted,
+        emailVerified: data.user.emailVerified,
+    });
+
+    return {
+        ...data,
+        accessToken,
+        refreshToken,
+    };
 };
 
 
