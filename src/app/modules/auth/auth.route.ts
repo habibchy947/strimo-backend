@@ -17,5 +17,10 @@ router.post("/change-password", checkAuth(Role.ADMIN, Role.USER), AuthController
 
 router.post("/logout", checkAuth(Role.ADMIN, Role.USER), AuthController.logoutUser);
 
+router.post("/verify-email", AuthController.verifyEmail);
+
+router.post("/forget-password", AuthController.forgetPassword);
+
+router.post("/reset-password", AuthController.resetPassword);
 
 export const AuthRoutes = router;
