@@ -1,0 +1,106 @@
+// ─── Media (Movie / Series) ─────────────────────────────────────────────────
+
+model Media {
+    id            String      @id @default(uuid(7))
+    title         String
+    slug          String      @unique
+    synopsis      String      @db.Text
+    posterUrl     String?
+    bannerUrl     String?
+    trailerUrl    String?
+    releaseYear   Int
+    director      String
+    duration      String?     // e.g. "2h 30m"
+    mediaType     MediaType
+    pricingType   PricingType @default(FREE)
+    price         Float       @default(0)
+    rentalPrice   Float       @default(0)
+    rentalDays    Int         @default(7)
+    streamingUrl  String?     // YouTube or other streaming link
+    genres        Genre[]
+    isFeatured    Boolean     @default(false)
+    isEditorPick  Boolean     @default(false)
+    averageRating Float       @default(0)
+    totalRatings  Int         @default(0)
+    totalReviews  Int         @default(0)
+    viewCount     Int         @default(0)
+    isPublished   Boolean     @default(true)
+    isDeleted     Boolean     @default(false)
+    deletedAt     DateTime?
+    createdAt     DateTime    @default(now())
+    updatedAt     DateTime    @updatedAt
+
+    // Relations
+    cast           MediaCast[]
+    platforms      MediaPlatform[]
+    reviews        Review[]
+    watchlistItems WatchlistItem[]
+    purchases      Purchase[]
+
+    @@index([mediaType])
+    @@index([releaseYear])
+    @@index([averageRating])
+    @@index([pricingType])
+    @@index([isPublished, isDeleted])
+    @@map("media")
+}
+
+// ─── Cast Member ────────────────────────────────────────────────────────────
+
+model CastMember {
+    id        String      @id @default(uuid(7))
+    name      String
+    photoUrl  String?
+    bio       String?     @db.Text
+    media     MediaCast[]
+    createdAt DateTime    @default(now())
+    updatedAt DateTime    @updatedAt
+
+    @@map("cast_member")
+}
+
+// ─── Media ↔ Cast (many-to-many with role) ──────────────────────────────────
+
+model MediaCast {
+    id           String     @id @default(uuid(7))
+    role         String     // e.g. "Tony Stark", "Director", "Producer"
+    mediaId      String
+    media        Media      @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+    castMemberId String
+    castMember   CastMember @relation(fields: [castMemberId], references: [id], onDelete: Cascade)
+
+    @@unique([mediaId, castMemberId, role])
+    @@index([mediaId])
+    @@index([castMemberId])
+    @@map("media_cast")
+}
+
+// ─── Streaming Platform ─────────────────────────────────────────────────────
+
+model StreamingPlatform {
+    id        String          @id @default(uuid(7))
+    name      String          @unique // e.g. "Netflix", "Disney+", "Amazon Prime"
+    logoUrl   String?
+    url       String?
+    media     MediaPlatform[]
+    createdAt DateTime        @default(now())
+    updatedAt DateTime        @updatedAt
+
+    @@map("streaming_platform")
+}
+
+// ─── Media ↔ Platform (many-to-many) ────────────────────────────────────────
+
+model MediaPlatform {
+    id         String            @id @default(uuid(7))
+    mediaId    String
+    media      Media             @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+    platformId String
+    platform   StreamingPlatform @relation(fields: [platformId], references: [id], onDelete: Cascade)
+    url        String?           // direct link on that platform
+
+    @@unique([mediaId, platformId])
+    @@index([mediaId])
+    @@index([platformId])
+    @@map("media_platform")
+}

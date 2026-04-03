@@ -332,6 +332,25 @@ const resetPassword = async (email: string, otp: string, newPassword: string) =>
     });
 };
 
+const googleLoginSuccess = async (session: Record<string, any>) => {
+    const accessToken = TokenUtils.getAccessToken({
+        userId: session.user.id,
+        role: session.user.role,
+        name: session.user.name,
+    });
+
+    const refreshToken = TokenUtils.getRefreshToken({
+        userId: session.user.id,
+        role: session.user.role,
+        name: session.user.name,
+    });
+
+    return {
+        accessToken,
+        refreshToken,
+    };
+}
+
 
 export const AuthService = {
     registerUser,
@@ -343,4 +362,5 @@ export const AuthService = {
     verifyEmail,
     forgetPassword,
     resetPassword,
+    googleLoginSuccess,
 };

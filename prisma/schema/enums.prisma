@@ -1,10 +1,90 @@
+// ─── Auth Enums ─────────────────────────────────────────────────────────────
+
 enum Role {
     USER
     ADMIN
 }
 
 enum UserStatus {
+    ACTIVE
     BLOCKED
     DELETED
+}
+
+// ─── Media Enums ────────────────────────────────────────────────────────────
+
+enum MediaType {
+    MOVIE
+    SERIES
+}
+
+enum PricingType {
+    FREE
+    PREMIUM
+}
+
+enum Genre {
+    ACTION
+    ADVENTURE
+    ANIMATION
+    COMEDY
+    CRIME
+    DOCUMENTARY
+    DRAMA
+    FAMILY
+    FANTASY
+    HISTORY
+    HORROR
+    MUSIC
+    MYSTERY
+    ROMANCE
+    SCI_FI
+    THRILLER
+    WAR
+    WESTERN
+    BIOGRAPHY
+    SPORT
+}
+
+// ─── Review Enums ───────────────────────────────────────────────────────────
+
+enum ReviewStatus {
+    PENDING
+    APPROVED
+    REJECTED
+    UNPUBLISHED
+}
+
+// ─── Payment & Subscription Enums ───────────────────────────────────────────
+
+enum PaymentStatus {
+    PENDING
+    COMPLETED
+    FAILED
+    REFUNDED
+    CANCELLED
+}
+
+enum PaymentProvider {
+    STRIPE
+    SSLCOMMERZ
+    RAZORPAY
+    PAYPAL
+}
+
+enum SubscriptionPlan {
+    FREE
+    MONTHLY
+    YEARLY
+}
+
+enum SubscriptionStatus {
     ACTIVE
+    EXPIRED
+    CANCELLED
+}
+
+enum PurchaseType {
+    BUY
+    RENT
 }
