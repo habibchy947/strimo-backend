@@ -6,9 +6,11 @@ import { IQueryParams } from '../../interfaces/query.interface';
 import AppError from '../../errorHelper/AppError';
 
 const createMedia = catchAsync(async (req: Request, res: Response) => {
+  const files = req.files as { [fieldname: string]: Express.Multer.File[] } | undefined;
   const payload = {
     ...req.body,
-    posterUrl: req.file?.path,
+    posterUrl: files?.['file']?.[0]?.path,
+    screenshots: files?.['screenshots']?.map(file => file.path),
   }
   const result = await MediaService.createMedia(payload);
 
@@ -60,9 +62,11 @@ const getMediaBySlug = catchAsync(async (req: Request, res: Response) => {
 const updateMedia = catchAsync(async (req: Request, res: Response) => {
   const id = req.params.id as string;
 
+  const files = req.files as { [fieldname: string]: Express.Multer.File[] } | undefined;
   const payload = {
     ...req.body,
-    posterUrl: req.file?.path,
+    posterUrl: files?.['file']?.[0]?.path,
+    screenshots: files?.['screenshots']?.map(file => file.path),
   }
   
   const result = await MediaService.updateMedia(id, payload);

@@ -16,6 +16,8 @@ const storage = new CloudinaryStorage({
             folder = "pdfs";
         } else if (file.fieldname === "file") {
             folder = "posters";
+        } else if (file.fieldname === "screenshots") {
+            folder = "screenshots";
         }
 
         return {

@@ -11,7 +11,7 @@ const router = Router();
 router.post(
   '/',
   checkAuth(Role.USER),
-  multerUpload.single("file"),
+  multerUpload.fields([{ name: "file", maxCount: 1 }, { name: "screenshots", maxCount: 2 }]),
   validateRequest(createMediaSchema),
   MediaController.createMedia
 );
@@ -23,7 +23,7 @@ router.get('/:slug', MediaController.getMediaBySlug);
 router.patch(
   '/:id',
   checkAuth(Role.USER),
-  multerUpload.single("file"),
+  multerUpload.fields([{ name: "file", maxCount: 1 }, { name: "screenshots", maxCount: 2 }]),
   validateRequest(updateMediaSchema),
   MediaController.updateMedia
 );

@@ -6,6 +6,7 @@ model Media {
     slug          String      @unique
     synopsis      String      @db.Text
     posterUrl     String?
+    screenshots   String[]    // Array of Cloudinary screenshot URLs
     trailerUrl    String?
     releaseYear   Int
     director      String
