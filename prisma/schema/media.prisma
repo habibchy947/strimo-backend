@@ -2,11 +2,10 @@
 
 model Media {
     id            String      @id @default(uuid(7))
-    title         String
+    title         String      @unique
     slug          String      @unique
     synopsis      String      @db.Text
     posterUrl     String?
-    bannerUrl     String?
     trailerUrl    String?
     releaseYear   Int
     director      String
@@ -16,7 +15,7 @@ model Media {
     price         Float       @default(0)
     rentalPrice   Float       @default(0)
     rentalDays    Int         @default(7)
-    streamingUrl  String?     // YouTube or other streaming link
+    streamingUrl  String?      // YouTube or other streaming link
     genres        Genre[]
     isFeatured    Boolean     @default(false)
     isEditorPick  Boolean     @default(false)
@@ -29,9 +28,9 @@ model Media {
     deletedAt     DateTime?
     createdAt     DateTime    @default(now())
     updatedAt     DateTime    @updatedAt
+    cast          String[]
 
     // Relations
-    cast           MediaCast[]
     platforms      MediaPlatform[]
     reviews        Review[]
     watchlistItems WatchlistItem[]
@@ -45,35 +44,7 @@ model Media {
     @@map("media")
 }
 
-// ─── Cast Member ────────────────────────────────────────────────────────────
 
-model CastMember {
-    id        String      @id @default(uuid(7))
-    name      String
-    photoUrl  String?
-    bio       String?     @db.Text
-    media     MediaCast[]
-    createdAt DateTime    @default(now())
-    updatedAt DateTime    @updatedAt
-
-    @@map("cast_member")
-}
-
-// ─── Media ↔ Cast (many-to-many with role) ──────────────────────────────────
-
-model MediaCast {
-    id           String     @id @default(uuid(7))
-    role         String     // e.g. "Tony Stark", "Director", "Producer"
-    mediaId      String
-    media        Media      @relation(fields: [mediaId], references: [id], onDelete: Cascade)
-    castMemberId String
-    castMember   CastMember @relation(fields: [castMemberId], references: [id], onDelete: Cascade)
-
-    @@unique([mediaId, castMemberId, role])
-    @@index([mediaId])
-    @@index([castMemberId])
-    @@map("media_cast")
-}
 
 // ─── Streaming Platform ─────────────────────────────────────────────────────
 
