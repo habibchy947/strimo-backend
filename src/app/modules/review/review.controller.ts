@@ -3,13 +3,14 @@ import { catchAsync } from '../../shared/catchAsync';
 import { sendResponse } from '../../shared/sendResponse';
 import { ReviewService } from './review.service';
 import { IQueryParams } from '../../interfaces/query.interface';
+import status from 'http-status';
 
 const createReview = catchAsync(async (req: Request, res: Response) => {
   const userId = req.user.userId;
   const result = await ReviewService.createReview(userId, req.body);
 
   sendResponse(res, {
-    httpStatusCode: 201,
+    httpStatusCode: status.CREATED,
     success: true,
     message: 'Review submitted successfully',
     data: result,
@@ -17,12 +18,22 @@ const createReview = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getAllReviews = catchAsync(async (req: Request, res: Response) => {
-  // If req.user is undefined (public route), userRole is undefined
-  const userRole = req.user?.role;
-  const result = await ReviewService.getAllReviews(req.query as IQueryParams, userRole);
+  const result = await ReviewService.getAllReviews(req.query as IQueryParams);
 
   sendResponse(res, {
-    httpStatusCode: 200,
+    httpStatusCode: status.OK,
+    success: true,
+    message: 'Reviews retrieved successfully',
+    meta: result.meta,
+    data: result.data,
+  });
+});
+
+const getAllReviewsByAdmin = catchAsync(async (req: Request, res: Response) => {
+  const result = await ReviewService.getAllReviewsByAdmin(req.query as IQueryParams);
+
+  sendResponse(res, {
+    httpStatusCode: status.OK,
     success: true,
     message: 'Reviews retrieved successfully',
     meta: result.meta,
@@ -35,7 +46,7 @@ const getMyReviews = catchAsync(async (req: Request, res: Response) => {
   const result = await ReviewService.getMyReviews(userId);
 
   sendResponse(res, {
-    httpStatusCode: 200,
+    httpStatusCode: status.OK,
     success: true,
     message: 'Review retrieved successfully',
     data: result,
@@ -50,7 +61,7 @@ const updateReview = catchAsync(async (req: Request, res: Response) => {
   const result = await ReviewService.updateReview(id, userId, userRole, req.body);
 
   sendResponse(res, {
-    httpStatusCode: 200,
+    httpStatusCode: status.OK,
     success: true,
     message: 'Review updated successfully',
     data: result,
@@ -63,7 +74,7 @@ const changeReviewStatus = catchAsync(async (req: Request, res: Response) => {
   const result = await ReviewService.changeReviewStatus(id, req.body.status);
 
   sendResponse(res, {
-    httpStatusCode: 200,
+    httpStatusCode: status.OK,
     success: true,
     message: 'Review status changed successfully',
     data: result,
@@ -78,7 +89,7 @@ const deleteReview = catchAsync(async (req: Request, res: Response) => {
   await ReviewService.deleteReview(id, userId, userRole);
 
   sendResponse(res, {
-    httpStatusCode: 200,
+    httpStatusCode: status.OK,
     success: true,
     message: 'Review deleted successfully',
     data: null,
@@ -88,6 +99,7 @@ const deleteReview = catchAsync(async (req: Request, res: Response) => {
 export const ReviewController = {
   createReview,
   getAllReviews,
+  getAllReviewsByAdmin,
   getMyReviews,
   updateReview,
   changeReviewStatus,

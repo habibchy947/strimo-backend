@@ -14,9 +14,10 @@ router.post(
   ReviewController.createReview
 );
 
-// Admins and exact users can view, but the service filters PENDING/REJECTED for standard users automatically
-// You can optionally remove checkAuth, but assuming it requires login:
-router.get('/', checkAuth(Role.USER, Role.ADMIN), ReviewController.getAllReviews);
+// Anyone can view APPROVED reviews publicly (handled automatically in service)
+router.get('/', ReviewController.getAllReviews);
+
+router.get('/admin/all', checkAuth(Role.ADMIN), ReviewController.getAllReviewsByAdmin);
 
 router.get('/my-reviews', checkAuth(Role.USER, Role.ADMIN), ReviewController.getMyReviews);
 

@@ -44,22 +44,59 @@ const createReview = async (userId: string, payload: ICreateReviewPayload) => {
 };
 
 // get all reviews
-const getAllReviews = async (query: IQueryParams, userRole?: string) => {
+const getAllReviews = async (query: IQueryParams) => {
   const queryBuilder = new QueryBuilder<Review, Prisma.ReviewWhereInput, Prisma.ReviewInclude>(prisma.review, query, {
     searchableFields: reviewSearchableFields,
     filterableFields: reviewFilterableFields,
   });
 
-  // If standard user or uncontrolled, only show APPROVED reviews
-  let baseWhere: Prisma.ReviewWhereInput = {};
-  if (userRole !== Role.ADMIN) {
-    baseWhere = { status: ReviewStatus.APPROVED };
-  }
+  const result = await queryBuilder
+    .search()
+    .filter()
+    .where({ status: ReviewStatus.APPROVED })
+    .include({
+      user: {
+        select: { id: true, name: true, image: true }
+      },
+      media: {
+        select: { id: true, title: true, posterUrl: true }
+      },
+      likes: {
+        select: {
+          id: true,
+          user: {
+            select: { id: true, name: true, image: true }
+          }
+        }
+      },
+      comments: {
+        select: {
+          id: true,
+          user: {
+            select: { id: true, name: true, image: true }
+          }
+        }
+      },
+      _count: {
+        select: { likes: true, comments: true }
+      }
+    })
+    .sort()
+    .paginate()
+    .fields()
+    .execute();
+  return result;
+};
+
+const getAllReviewsByAdmin = async (query: IQueryParams) => {
+  const queryBuilder = new QueryBuilder<Review, Prisma.ReviewWhereInput, Prisma.ReviewInclude>(prisma.review, query, {
+    searchableFields: reviewSearchableFields,
+    filterableFields: reviewFilterableFields,
+  });
 
   const result = await queryBuilder
     .search()
     .filter()
-    .where(baseWhere)
     .include({
       user: {
         select: { id: true, name: true, image: true }
@@ -263,6 +300,7 @@ const deleteReview = async (id: string, userId: string, userRole: string) => {
 export const ReviewService = {
   createReview,
   getAllReviews,
+  getAllReviewsByAdmin,
   getMyReviews,
   updateReview,
   changeReviewStatus,
