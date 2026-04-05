@@ -55,6 +55,13 @@ enum ReviewStatus {
     UNPUBLISHED
 }
 
+enum ReviewTag {
+    CLASSIC
+    UNDERRATED
+    MUST_WATCH
+    FAMILY_FRIENDLY
+}
+
 // ─── Payment & Subscription Enums ───────────────────────────────────────────
 
 enum PaymentStatus {

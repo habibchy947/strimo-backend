@@ -17,6 +17,7 @@ router.post(
 );
 
 router.get('/', MediaController.getAllMedia);
+router.get('/admin', checkAuth(Role.ADMIN), MediaController.getAllMediaByAdmin);
 router.get('/single/:id', MediaController.getMediaById);
 router.get('/:slug', MediaController.getMediaBySlug);
 

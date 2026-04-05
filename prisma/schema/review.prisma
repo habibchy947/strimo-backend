@@ -5,7 +5,7 @@ model Review {
     rating        Int          // 1–10 scale
     content       String       @db.Text
     hasSpoiler    Boolean      @default(false)
-    tags          String[]     // e.g. ["classic", "underrated", "family-friendly"]
+    tags          ReviewTag[]  // e.g. ["classic", "underrated", "family-friendly"]
     status        ReviewStatus @default(PENDING)
     likesCount    Int          @default(0)
     commentsCount Int          @default(0)

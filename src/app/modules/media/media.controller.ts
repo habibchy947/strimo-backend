@@ -3,6 +3,7 @@ import { catchAsync } from '../../shared/catchAsync';
 import { sendResponse } from '../../shared/sendResponse';
 import { MediaService } from './media.service';
 import { IQueryParams } from '../../interfaces/query.interface';
+import status from 'http-status';
 
 const createMedia = catchAsync(async (req: Request, res: Response) => {
   const files = req.files as { [fieldname: string]: Express.Multer.File[] } | undefined;
@@ -20,7 +21,7 @@ const createMedia = catchAsync(async (req: Request, res: Response) => {
   const result = await MediaService.createMedia(payload);
 
   sendResponse(res, {
-    httpStatusCode: 201,
+    httpStatusCode: status.CREATED,
     success: true,
     message: 'Media created successfully',
     data: result,
@@ -32,7 +33,19 @@ const getAllMedia = catchAsync(async (req: Request, res: Response) => {
   const result = await MediaService.getAllMedia(req.query as IQueryParams);
 
   sendResponse(res, {
-    httpStatusCode: 200,
+    httpStatusCode: status.OK,
+    success: true,
+    message: 'Media retrieved successfully',
+    meta: result.meta,
+    data: result.data,
+  });
+});
+
+const getAllMediaByAdmin = catchAsync(async (req: Request, res: Response) => {
+  const result = await MediaService.getAllMediaByAdmin(req.query as IQueryParams);
+
+  sendResponse(res, {
+    httpStatusCode: status.OK,
     success: true,
     message: 'Media retrieved successfully',
     meta: result.meta,
@@ -126,4 +139,5 @@ export const MediaController = {
   updateMedia,
   softDeleteMedia,
   getMediaById,
+  getAllMediaByAdmin
 };

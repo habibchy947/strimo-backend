@@ -33,6 +33,31 @@ const createMedia = async (payload: ICreateMediaPayload) => {
   return newMedia;
 };
 
+const getAllMediaByAdmin = async (query: IQueryParams) => {
+  const queryBuilder = new QueryBuilder<Media, Prisma.MediaWhereInput, Prisma.MediaInclude>(prisma.media, query, {
+    searchableFields: MediaSearchableFields,
+    filterableFields: MediaFilterableFields,
+  })
+
+  const result = await queryBuilder
+    .search()
+    .filter()
+    .include({
+      reviews: {
+        include: { user: true },
+      },
+      watchlistItems: true,
+      purchases: true,
+    })
+    .sort()
+    .dynamicInclude(mediaIncludeConfig)
+    .paginate()
+    .fields()
+    .execute();
+
+  return result;
+};
+
 const getAllMedia = async (query: IQueryParams) => {
   const queryBuilder = new QueryBuilder<Media, Prisma.MediaWhereInput, Prisma.MediaInclude>(prisma.media, query, {
     searchableFields: MediaSearchableFields,
@@ -42,7 +67,7 @@ const getAllMedia = async (query: IQueryParams) => {
   const result = await queryBuilder
     .search()
     .filter()
-    .where({ isDeleted: false })
+    .where({ isDeleted: false, isPublished: true })
     .include({
       reviews: {
         include: { user: true },
@@ -174,4 +199,5 @@ export const MediaService = {
   updateMedia,
   softDeleteMedia,
   getMediaById,
+  getAllMediaByAdmin
 };
