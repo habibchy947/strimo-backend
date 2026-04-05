@@ -96,6 +96,19 @@ const deleteReview = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const toggleReviewLike = catchAsync(async (req: Request, res: Response) => {
+  const id = req.params.id as string;
+  const userId = req.user.userId;
+
+  const result = await ReviewService.toggleReviewLike(id, userId);
+
+  sendResponse(res, {
+    httpStatusCode: status.OK,
+    success: true,
+    message: `Review ${result.action}`,
+  });
+});
+
 export const ReviewController = {
   createReview,
   getAllReviews,
@@ -104,4 +117,5 @@ export const ReviewController = {
   updateReview,
   changeReviewStatus,
   deleteReview,
+  toggleReviewLike,
 };

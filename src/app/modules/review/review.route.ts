@@ -28,6 +28,12 @@ router.patch(
   ReviewController.updateReview
 );
 
+router.post(
+  '/:id/like',
+  checkAuth(Role.USER, Role.ADMIN),
+  ReviewController.toggleReviewLike
+);
+
 router.patch(
   '/:id/status',
   checkAuth(Role.ADMIN),

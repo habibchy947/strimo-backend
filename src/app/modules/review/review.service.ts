@@ -297,6 +297,58 @@ const deleteReview = async (id: string, userId: string, userRole: string) => {
   return result;
 };
 
+// toggle review like
+const toggleReviewLike = async (reviewId: string, userId: string) => {
+  const review = await prisma.review.findUnique({
+    where: { id: reviewId, status: ReviewStatus.APPROVED },
+  });
+
+  if (!review) {
+    throw new AppError(status.NOT_FOUND, 'Review not found');
+  }
+
+  const existingLike = await prisma.reviewLike.findUnique({
+    where: {
+      userId_reviewId: {
+        userId,
+        reviewId,
+      },
+    },
+  });
+
+  const result = await prisma.$transaction(async (tx) => {
+    if (existingLike) {
+      // remove like
+      await tx.reviewLike.delete({
+        where: { id: existingLike.id },
+      });
+
+      // decrement likesCount
+      const updatedReview = await tx.review.update({
+        where: { id: reviewId },
+        data: { likesCount: { decrement: 1 } },
+      });
+      
+      return { action: 'unliked', review: updatedReview };
+    } else {
+      // add like
+      await tx.reviewLike.create({
+        data: { userId, reviewId },
+      });
+
+      // increment likesCount
+      const updatedReview = await tx.review.update({
+        where: { id: reviewId },
+        data: { likesCount: { increment: 1 } },
+      });
+      
+      return { action: 'liked', review: updatedReview };
+    }
+  });
+
+  return result;
+};
+
 export const ReviewService = {
   createReview,
   getAllReviews,
@@ -305,4 +357,5 @@ export const ReviewService = {
   updateReview,
   changeReviewStatus,
   deleteReview,
+  toggleReviewLike,
 };
