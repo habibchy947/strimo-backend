@@ -8,6 +8,7 @@ import { QueryBuilder } from '../../utils/QueryBuilder';
 import { IQueryParams } from '../../interfaces/query.interface';
 import AppError from '../../errorHelper/AppError';
 import status from 'http-status';
+import { deleteFileFromCloudinary } from '../../utils/cloudinary';
 
 const createMedia = async (payload: ICreateMediaPayload) => {
   const baseSlug = slugify(payload.title);
@@ -43,9 +44,6 @@ const getAllMedia = async (query: IQueryParams) => {
     .filter()
     .where({ isDeleted: false })
     .include({
-      platforms: {
-        include: { platform: true },
-      },
       reviews: {
         include: { user: true },
       },
@@ -65,9 +63,6 @@ const getMediaById = async (id: string) => {
   const media = await prisma.media.findUnique({
     where: { id, isDeleted: false },
     include: {
-      platforms: {
-        include: { platform: true },
-      },
       reviews: {
         include: { user: true },
       },
@@ -76,12 +71,12 @@ const getMediaById = async (id: string) => {
     },
   });
 
-  if(media) {
+  if (media) {
     // Increment view async (no need to await to block response)
     prisma.media.update({
       where: { id },
       data: { viewCount: { increment: 1 } },
-    }).catch(() => {});
+    }).catch(() => { });
   }
 
   return media;
@@ -91,9 +86,6 @@ const getMediaBySlug = async (slug: string) => {
   const media = await prisma.media.findUnique({
     where: { slug, isDeleted: false },
     include: {
-      platforms: {
-        include: { platform: true },
-      },
       reviews: {
         include: { user: true },
       },
@@ -107,7 +99,7 @@ const getMediaBySlug = async (slug: string) => {
     prisma.media.update({
       where: { slug },
       data: { viewCount: { increment: 1 } },
-    }).catch(() => {});
+    }).catch(() => { });
   }
 
   return media;
@@ -118,14 +110,31 @@ const updateMedia = async (id: string, payload: IUpdateMediaPayload) => {
     where: { id, isDeleted: false },
   });
 
-  if(!isMediaExist) {
+  if (!isMediaExist) {
     throw new AppError(status.NOT_FOUND, "Media not found");
   }
 
-  let updateData: Prisma.MediaUpdateInput = { 
-    ...payload, 
-    genres: payload.genres ? (payload.genres as Genre[]) : undefined 
+  let updateData: Prisma.MediaUpdateInput = {
+    ...payload,
+    genres: payload.genres ? (payload.genres as Genre[]) : undefined
   };
+
+  // Delete the old poster if a completely new one was uploaded
+  if (payload.posterUrl && isMediaExist.posterUrl && payload.posterUrl !== isMediaExist.posterUrl) {
+    await deleteFileFromCloudinary(isMediaExist.posterUrl).catch(() => {});
+  }
+
+  // Delete old screenshots if they were removed/updated
+  if (payload.screenshots !== undefined) {
+    const oldScreenshots = isMediaExist.screenshots || [];
+    const newScreenshots = payload.screenshots;
+    
+    // Find URLs that exist in the old database but were NOT passed in the current payload
+    const removedScreenshots = oldScreenshots.filter(url => !newScreenshots.includes(url));
+    
+    // Fire deletions asynchronously to avoid blocking the update response unnessarily
+    removedScreenshots.forEach(url => deleteFileFromCloudinary(url).catch(() => {}));
+  }
 
   if (payload.title) {
     updateData.slug = slugify(payload.title); // Simple re-slug, careful of duplicates in real prod
@@ -144,7 +153,7 @@ const softDeleteMedia = async (id: string) => {
     where: { id, isDeleted: false },
   });
 
-  if(!isMediaExist) {
+  if (!isMediaExist) {
     throw new AppError(status.NOT_FOUND, "Media not found");
   }
 

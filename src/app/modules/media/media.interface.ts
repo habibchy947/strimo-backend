@@ -13,6 +13,7 @@ export type ICreateMediaPayload = {
   rentalDays?: number;
   streamingUrl?: string;
   trailerUrl?: string; // added back as per Option A string URL
+  posterUrl?: string;
   screenshots?: string[];
   genres: Genre[];
   cast: string[];
@@ -33,6 +34,7 @@ export type IUpdateMediaPayload = {
   rentalDays?: number;
   streamingUrl?: string;
   trailerUrl?: string;
+  posterUrl?: string;
   screenshots?: string[];
   isFeatured?: boolean;
   isEditorPick?: boolean;

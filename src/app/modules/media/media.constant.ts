@@ -1,6 +1,6 @@
 import { Prisma } from "../../../generated/prisma/client";
 
-export const MediaSearchableFields = ['title', 'director', 'synopsis', 'slug', 'title', 'cast', 'genres', 'platforms', 'reviews', 'watchlistItems', 'purchases'];
+export const MediaSearchableFields = ['title', 'director', 'synopsis', 'slug', 'title', 'cast', 'genres', 'reviews', 'watchlistItems', 'purchases'];
 
 export const MediaSortableFields = [
   'averageRating',
@@ -11,7 +11,6 @@ export const MediaSortableFields = [
 ];
 
 export const MediaFilterableFields = [
-  'platform',
   'isFeatured',
   'isEditorPick',
   'averageRating',
@@ -26,7 +25,6 @@ export const MediaFilterableFields = [
   'director',
   'cast',
   'genres',
-  'platforms',
   'reviews',
   'watchlistItems',
   'purchases',
@@ -39,9 +37,6 @@ export const MediaFilterableFields = [
 ];
 
 export const mediaIncludeConfig: Partial<Record<keyof Prisma.MediaInclude, Prisma.MediaInclude[keyof Prisma.MediaInclude]>> = {
-  platforms: {
-    include: { platform: true },
-  },
   reviews: {
     include: { user: true },
   },

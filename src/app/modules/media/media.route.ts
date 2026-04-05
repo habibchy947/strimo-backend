@@ -10,7 +10,7 @@ const router = Router();
 
 router.post(
   '/',
-  checkAuth(Role.USER),
+  checkAuth(Role.ADMIN),
   multerUpload.fields([{ name: "file", maxCount: 1 }, { name: "screenshots", maxCount: 2 }]),
   validateRequest(createMediaSchema),
   MediaController.createMedia
@@ -22,12 +22,12 @@ router.get('/:slug', MediaController.getMediaBySlug);
 
 router.patch(
   '/:id',
-  checkAuth(Role.USER),
+  checkAuth(Role.ADMIN),
   multerUpload.fields([{ name: "file", maxCount: 1 }, { name: "screenshots", maxCount: 2 }]),
   validateRequest(updateMediaSchema),
   MediaController.updateMedia
 );
 
-router.delete('/:id', checkAuth(Role.USER), MediaController.softDeleteMedia);
+router.delete('/:id', checkAuth(Role.ADMIN), MediaController.softDeleteMedia);
 
 export const MediaRoutes = router;

@@ -3,14 +3,19 @@ import { catchAsync } from '../../shared/catchAsync';
 import { sendResponse } from '../../shared/sendResponse';
 import { MediaService } from './media.service';
 import { IQueryParams } from '../../interfaces/query.interface';
-import AppError from '../../errorHelper/AppError';
 
 const createMedia = catchAsync(async (req: Request, res: Response) => {
   const files = req.files as { [fieldname: string]: Express.Multer.File[] } | undefined;
+  
+  const newScreenshots = files?.['screenshots']?.map(file => file.path) || [];
+
   const payload = {
     ...req.body,
     posterUrl: files?.['file']?.[0]?.path,
-    screenshots: files?.['screenshots']?.map(file => file.path),
+  };
+  
+  if (newScreenshots.length > 0) {
+    payload.screenshots = newScreenshots;
   }
   const result = await MediaService.createMedia(payload);
 
@@ -63,12 +68,35 @@ const updateMedia = catchAsync(async (req: Request, res: Response) => {
   const id = req.params.id as string;
 
   const files = req.files as { [fieldname: string]: Express.Multer.File[] } | undefined;
+  
+  // Safely parse old screenshots if provided by frontend
+  let existingScreenshots: string[] = [];
+  let updateScreenshots = false;
+  if (req.body.screenshots !== undefined) {
+    updateScreenshots = true;
+    try {
+      existingScreenshots = typeof req.body.screenshots === 'string' ? JSON.parse(req.body.screenshots) : req.body.screenshots;
+      if (!Array.isArray(existingScreenshots)) existingScreenshots = [req.body.screenshots];
+    } catch {
+      existingScreenshots = req.body.screenshots.split(',').map((s: string) => s.trim());
+    }
+  }
+
+  const newScreenshots = files?.['screenshots']?.map(file => file.path) || [];
+  if (newScreenshots.length > 0) updateScreenshots = true;
+
   const payload = {
     ...req.body,
-    posterUrl: files?.['file']?.[0]?.path,
-    screenshots: files?.['screenshots']?.map(file => file.path),
+  };
+
+  if (files?.['file']?.[0]?.path) {
+    payload.posterUrl = files['file'][0].path;
   }
   
+  if (updateScreenshots) {
+    payload.screenshots = [...existingScreenshots, ...newScreenshots];
+  }
+
   const result = await MediaService.updateMedia(id, payload);
 
   sendResponse(res, {

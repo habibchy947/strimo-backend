@@ -21,6 +21,8 @@ export const globalErrorHandler = async (err: any, req: Request, res: Response, 
         await Promise.all(imageUrls.map(url => deleteFileFromCloudinary(url)));
     }
 
+    
+
     let errorSources: TErrorSources[] = [];
     let statusCode: number = status.INTERNAL_SERVER_ERROR;
     let message: string = "Internal Server Error";

@@ -6,7 +6,7 @@ model Media {
     slug          String      @unique
     synopsis      String      @db.Text
     posterUrl     String?
-    screenshots   String[]    // Array of Cloudinary screenshot URLs
+    screenshots   String[]        // Array of Cloudinary screenshot URLs
     trailerUrl    String?
     releaseYear   Int
     director      String
@@ -32,7 +32,6 @@ model Media {
     cast          String[]
 
     // Relations
-    platforms      MediaPlatform[]
     reviews        Review[]
     watchlistItems WatchlistItem[]
     purchases      Purchase[]
@@ -45,34 +44,3 @@ model Media {
     @@map("media")
 }
 
-
-
-// ─── Streaming Platform ─────────────────────────────────────────────────────
-
-model StreamingPlatform {
-    id        String          @id @default(uuid(7))
-    name      String          @unique // e.g. "Netflix", "Disney+", "Amazon Prime"
-    logoUrl   String?
-    url       String?
-    media     MediaPlatform[]
-    createdAt DateTime        @default(now())
-    updatedAt DateTime        @updatedAt
-
-    @@map("streaming_platform")
-}
-
-// ─── Media ↔ Platform (many-to-many) ────────────────────────────────────────
-
-model MediaPlatform {
-    id         String            @id @default(uuid(7))
-    mediaId    String
-    media      Media             @relation(fields: [mediaId], references: [id], onDelete: Cascade)
-    platformId String
-    platform   StreamingPlatform @relation(fields: [platformId], references: [id], onDelete: Cascade)
-    url        String?           // direct link on that platform
-
-    @@unique([mediaId, platformId])
-    @@index([mediaId])
-    @@index([platformId])
-    @@map("media_platform")
-}
