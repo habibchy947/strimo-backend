@@ -3,6 +3,7 @@ import { AuthRoutes } from '../modules/auth/auth.route';
 import { MediaRoutes } from '../modules/media/media.route';
 import { ReviewRoutes } from '../modules/review/review.route';
 import { CommentRoutes } from '../modules/comment/comment.route';
+import { UserRoutes } from '../modules/user/user.route';
 
 const router = Router();
 
@@ -10,5 +11,6 @@ router.use("/auth", AuthRoutes);
 router.use("/media", MediaRoutes);
 router.use("/reviews", ReviewRoutes);
 router.use("/comments", CommentRoutes);
+router.use("/users", UserRoutes);
 
 export const IndexRoutes = router;
