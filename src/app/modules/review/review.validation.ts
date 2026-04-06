@@ -19,5 +19,5 @@ export const updateReviewSchema = z.object({
 
 export const changeReviewStatusSchema = z.object({
   status: z.enum(ReviewStatus, 'Status must be PENDING, APPROVED, or REJECTED.'),
-})
+});
 

@@ -23,4 +23,4 @@ export interface IUpdateReviewPayload {
   hasSpoiler?: boolean;
   tags?: ReviewTag[];
 }
-  
+

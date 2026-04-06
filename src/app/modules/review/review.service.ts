@@ -133,6 +133,14 @@ const getAllReviewsByAdmin = async (query: IQueryParams) => {
 
 // get my reviews
 const getMyReviews = async (userId: string) => {
+  const isUserExist = await prisma.user.findUnique({
+    where: { id: userId },
+  });
+
+  if (!isUserExist) {
+    throw new AppError(status.NOT_FOUND, 'User not found');
+  }
+
   const review = await prisma.review.findMany({
     where: { userId },
     include: {
@@ -169,6 +177,14 @@ const getMyReviews = async (userId: string) => {
 
 // update review
 const updateReview = async (id: string, userId: string, userRole: string, payload: IUpdateReviewPayload) => {
+  const isUserExist = await prisma.user.findUnique({
+    where: { id: userId },
+  });
+
+  if (!isUserExist) {
+    throw new AppError(status.NOT_FOUND, 'User not found');
+  }
+
   const review = await prisma.review.findUnique({
     where: { id },
   });
