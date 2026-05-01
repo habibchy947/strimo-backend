@@ -6,6 +6,7 @@ import { CommentRoutes } from '../modules/comment/comment.route';
 import { UserRoutes } from '../modules/user/user.route';
 import { WatchlistRoutes } from '../modules/watchlist/watchlist.route';
 import { PaymentRoutes } from '../modules/payment/payment.route';
+import { PurchaseRoutes } from '../modules/purchase/purchase.route';
 
 const router = Router();
 
@@ -16,5 +17,6 @@ router.use("/comments", CommentRoutes);
 router.use("/users", UserRoutes);
 router.use("/watchlists", WatchlistRoutes);
 router.use("/payments", PaymentRoutes);
+router.use("/purchases", PurchaseRoutes);
 
 export const IndexRoutes = router;
