@@ -1,0 +1,2 @@
+-- CreateEnum
+CREATE TYPE "PaymentType" AS ENUM ('SUBSCRIPTION', 'PURCHASE');

@@ -36,6 +36,11 @@ interface EnvConfig {
     ADMIN_PASSWORD: string;
     ADMIN_IMAGE: string;
     ADMIN_NAME: string;
+    STRIPE_SECRET_KEY: string;
+    STRIPE_WEBHOOK_SECRET: string;
+    STRIPE_PRODUCT_ID: string;
+    STRIPE_MONTHLY_PRICE_ID: string;
+    STRIPE_YEARLY_PRICE_ID: string;
 };
 
 const loadEnvVariables = (): EnvConfig => {
@@ -68,6 +73,11 @@ const loadEnvVariables = (): EnvConfig => {
         'ADMIN_PASSWORD',
         'ADMIN_IMAGE',
         'ADMIN_NAME',
+        'STRIPE_SECRET_KEY',
+        'STRIPE_WEBHOOK_SECRET',
+        'STRIPE_PRODUCT_ID',
+        'STRIPE_MONTHLY_PRICE_ID',
+        'STRIPE_YEARLY_PRICE_ID',
     ];
 
     requiredEnvVariable.forEach((variable) => {
@@ -109,6 +119,11 @@ const loadEnvVariables = (): EnvConfig => {
         ADMIN_PASSWORD: process.env.ADMIN_PASSWORD as string,
         ADMIN_IMAGE: process.env.ADMIN_IMAGE as string,
         ADMIN_NAME: process.env.ADMIN_NAME as string,
+        STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY as string,
+        STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET as string,
+        STRIPE_PRODUCT_ID: process.env.STRIPE_PRODUCT_ID as string,
+        STRIPE_MONTHLY_PRICE_ID: process.env.STRIPE_MONTHLY_PRICE_ID as string,
+        STRIPE_YEARLY_PRICE_ID: process.env.STRIPE_YEARLY_PRICE_ID as string,
     };
 };
 

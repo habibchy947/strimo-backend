@@ -1,46 +1,45 @@
 // ─── Media (Movie / Series) ─────────────────────────────────────────────────
 
 model Media {
-    id            String      @id @default(uuid(7))
-    title         String      @unique
-    slug          String      @unique
-    synopsis      String      @db.Text
-    posterUrl     String?
-    screenshots   String[]        // Array of Cloudinary screenshot URLs
-    trailerUrl    String?
-    releaseYear   Int
-    director      String
-    duration      String?     // e.g. "2h 30m"
-    mediaType     MediaType
-    pricingType   PricingType @default(FREE)
-    price         Float       @default(0)
-    rentalPrice   Float       @default(0)
-    rentalDays    Int         @default(7)
-    streamingUrl  String?      // YouTube or other streaming link
-    genres        Genre[]
-    isFeatured    Boolean     @default(false)
-    isEditorPick  Boolean     @default(false)
-    averageRating Float       @default(0)
-    totalRatings  Int         @default(0)
-    totalReviews  Int         @default(0)
-    viewCount     Int         @default(0)
-    isPublished   Boolean     @default(true)
-    isDeleted     Boolean     @default(false)
-    deletedAt     DateTime?
-    createdAt     DateTime    @default(now())
-    updatedAt     DateTime    @updatedAt
-    cast          String[]
+  id            String      @id @default(uuid(7))
+  title         String      @unique
+  slug          String      @unique
+  synopsis      String      @db.Text
+  posterUrl     String?
+  screenshots   String[] // Array of Cloudinary screenshot URLs
+  trailerUrl    String?
+  releaseYear   Int
+  director      String
+  duration      String? // e.g. "2h 30m"
+  mediaType     MediaType
+  pricingType   PricingType @default(FREE)
+  price         Float       @default(0)
+  rentalPrice   Float       @default(0)
+  rentalDays    Int         @default(7)
+  streamingUrl  String? // YouTube or other streaming link
+  genres        Genre[]
+  isFeatured    Boolean     @default(false)
+  isEditorPick  Boolean     @default(false)
+  averageRating Float       @default(0)
+  totalRatings  Int         @default(0)
+  totalReviews  Int         @default(0)
+  viewCount     Int         @default(0)
+  isPublished   Boolean     @default(true)
+  isDeleted     Boolean     @default(false)
+  deletedAt     DateTime?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  cast          String[]
 
-    // Relations
-    reviews        Review[]
-    watchlistItems WatchlistItem[]
-    purchases      Purchase[]
+  // Relations
+  reviews        Review[]
+  watchlistItems WatchlistItem[]
+  purchases      Purchase[]
 
-    @@index([mediaType])
-    @@index([releaseYear])
-    @@index([averageRating])
-    @@index([pricingType])
-    @@index([isPublished, isDeleted])
-    @@map("media")
+  @@index([mediaType])
+  @@index([releaseYear])
+  @@index([averageRating])
+  @@index([pricingType])
+  @@index([isPublished, isDeleted])
+  @@map("media")
 }
-

@@ -68,6 +68,7 @@ const getAllMedia = async (query: IQueryParams) => {
     .search()
     .filter()
     .where({ isDeleted: false, isPublished: true })
+    .omit({ streamingUrl: true })
     .include({
       reviews: {
         include: { user: true },
@@ -87,6 +88,9 @@ const getAllMedia = async (query: IQueryParams) => {
 const getMediaById = async (id: string) => {
   const media = await prisma.media.findUnique({
     where: { id, isDeleted: false },
+    omit: {
+      streamingUrl: true,
+    },
     include: {
       reviews: {
         include: { user: true },
@@ -110,13 +114,16 @@ const getMediaById = async (id: string) => {
 const getMediaBySlug = async (slug: string) => {
   const media = await prisma.media.findUnique({
     where: { slug, isDeleted: false },
+    omit: {
+      streamingUrl: true,
+    },
     include: {
       reviews: {
         include: { user: true },
       },
       watchlistItems: true,
       purchases: true,
-    },
+    }
   });
 
   if (media) {
@@ -192,6 +199,18 @@ const softDeleteMedia = async (id: string) => {
   return result;
 };
 
+const playMedia = async (id: string) => {
+  const media = await prisma.media.findUnique({
+    where: { id, isDeleted: false },
+  });
+
+  if (!media) {
+    throw new AppError(status.NOT_FOUND, "Media not found");
+  }
+
+  return media.streamingUrl;
+};
+
 export const MediaService = {
   createMedia,
   getAllMedia,
@@ -199,5 +218,6 @@ export const MediaService = {
   updateMedia,
   softDeleteMedia,
   getMediaById,
-  getAllMediaByAdmin
+  getAllMediaByAdmin,
+  playMedia
 };

@@ -6,6 +6,8 @@ import { checkAuth } from '../../middleware/checkAuth';
 import { Role } from '../../../generated/prisma/enums';
 import { multerUpload } from '../../middleware/upload';
 
+import { checkMediaAccess } from '../../middleware/checkMediaAccess';
+
 const router = Router();
 
 router.post(
@@ -19,6 +21,7 @@ router.post(
 router.get('/', MediaController.getAllMedia);
 router.get('/admin', checkAuth(Role.ADMIN), MediaController.getAllMediaByAdmin);
 router.get('/single/:id', MediaController.getMediaById);
+router.get('/play/:id', checkAuth(Role.USER, Role.ADMIN), checkMediaAccess, MediaController.playMedia);
 router.get('/:slug', MediaController.getMediaBySlug);
 
 router.patch(

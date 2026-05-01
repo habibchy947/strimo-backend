@@ -1,31 +1,31 @@
 // ─── Watchlist ───────────────────────────────────────────────────────────────
 
 model Watchlist {
-    id     String          @id @default(uuid(7))
-    name   String          @default("My Watchlist")
-    userId String
-    user   User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-    items  WatchlistItem[]
+  id     String          @id @default(uuid(7))
+  name   String          @default("My Watchlist")
+  userId String
+  user   User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items  WatchlistItem[]
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    @@index([userId])
-    @@map("watchlist")
+  @@index([userId])
+  @@map("watchlist")
 }
 
 // ─── Watchlist Item ─────────────────────────────────────────────────────────
 
 model WatchlistItem {
-    id          String    @id @default(uuid(7))
-    watchlistId String
-    watchlist   Watchlist @relation(fields: [watchlistId], references: [id], onDelete: Cascade)
-    mediaId     String
-    media       Media     @relation(fields: [mediaId], references: [id], onDelete: Cascade)
-    addedAt     DateTime  @default(now())
+  id          String    @id @default(uuid(7))
+  watchlistId String
+  watchlist   Watchlist @relation(fields: [watchlistId], references: [id], onDelete: Cascade)
+  mediaId     String
+  media       Media     @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+  addedAt     DateTime  @default(now())
 
-    @@unique([watchlistId, mediaId]) // prevent duplicates
-    @@index([watchlistId])
-    @@index([mediaId])
-    @@map("watchlist_item")
+  @@unique([watchlistId, mediaId]) // prevent duplicates
+  @@index([watchlistId])
+  @@index([mediaId])
+  @@map("watchlist_item")
 }

@@ -26,20 +26,22 @@ export const uploadFileToCloudinary = async(
 
         const folder = fileExtension === "pdf" ? "pdfs" : "images";
 
-        return new Promise((resolve, reject) => {
-            cloudinary.uploader.upload_stream({
+        return new Promise(async (resolve, reject) => {
+            const stream = cloudinary.uploader.upload_stream({
                 resource_type: "auto",
                 public_id: `strimo/${folder}/${uniqueName}`,
                 folder: `strimo/${folder}`,
-            
             },
             (error, result) => {
                 if(error) {
+                    console.error("Cloudinary upload error:", error);
                     return reject(new AppError(status.INTERNAL_SERVER_ERROR, "Failed to upload file to cloudinary"))
                 }
                 resolve(result as UploadApiResponse);
-            }
-        );
+            });
+            
+            const streamifier = await import('streamifier');
+            streamifier.default.createReadStream(buffer).pipe(stream);
         });
 }
 

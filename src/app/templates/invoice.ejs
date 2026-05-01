@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Your Invoice</title>
+</head>
+<body style="margin:0; padding:0; background-color:#f4f6f8; font-family: Arial, sans-serif;">
+  
+  <table align="center" width="100%" cellpadding="0" cellspacing="0" style="padding: 40px 0;">
+    <tr>
+      <td align="center">
+        
+        <table width="400" cellpadding="0" cellspacing="0" style="background:#ffffff; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.1); overflow:hidden;">
+          
+          <!-- Header -->
+          <tr>
+            <td style="background:#10b981; padding:20px; text-align:center; color:#ffffff; font-size:22px; font-weight:bold;">
+              🧾 Payment Successful
+            </td>
+          </tr>
+
+          <!-- Body -->
+          <tr>
+            <td style="padding:30px; text-align:center; color:#333;">
+              
+              <h2 style="margin:0 0 10px;">Hello <%= name %>,</h2>
+              
+              <p style="font-size:16px; margin:10px 0 20px;">
+                Thank you for your purchase! Here are your invoice details:
+              </p>
+
+              <div style="display:inline-block; padding:15px 25px; background:#f3f4f6; border-radius:8px; font-size:16px; color:#111; text-align:left; width: 100%; box-sizing: border-box;">
+                <p style="margin: 5px 0;"><strong>Item:</strong> <%= itemName %></p>
+                <p style="margin: 5px 0;"><strong>Amount:</strong> <%= amount %> <%= currency %></p>
+                <p style="margin: 5px 0;"><strong>Transaction ID:</strong> <%= transactionId %></p>
+              </div>
+
+              <p style="font-size:14px; margin-top:20px; color:#666;">
+                You can download your detailed PDF invoice from the attachment or by clicking the link below:
+              </p>
+              <p style="margin-top:10px;">
+                <a href="<%= invoiceUrl %>" style="color: #4f46e5; text-decoration: none; font-weight: bold;">View Online Invoice</a>
+              </p>
+
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding:20px; text-align:center; font-size:12px; color:#999; background:#f9fafb;">
+              If you have any questions, please contact our support team.
+            </td>
+          </tr>
+
+        </table>
+
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>

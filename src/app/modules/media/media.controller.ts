@@ -4,17 +4,20 @@ import { sendResponse } from '../../shared/sendResponse';
 import { MediaService } from './media.service';
 import { IQueryParams } from '../../interfaces/query.interface';
 import status from 'http-status';
+import { IRequestUser } from '../../interfaces/req.user.interface';
+// import { checkMediaAccess } from './media.utils';
+import AppError from '../../errorHelper/AppError';
 
 const createMedia = catchAsync(async (req: Request, res: Response) => {
   const files = req.files as { [fieldname: string]: Express.Multer.File[] } | undefined;
-  
+
   const newScreenshots = files?.['screenshots']?.map(file => file.path) || [];
 
   const payload = {
     ...req.body,
     posterUrl: files?.['file']?.[0]?.path,
   };
-  
+
   if (newScreenshots.length > 0) {
     payload.screenshots = newScreenshots;
   }
@@ -81,7 +84,7 @@ const updateMedia = catchAsync(async (req: Request, res: Response) => {
   const id = req.params.id as string;
 
   const files = req.files as { [fieldname: string]: Express.Multer.File[] } | undefined;
-  
+
   // Safely parse old screenshots if provided by frontend
   let existingScreenshots: string[] = [];
   let updateScreenshots = false;
@@ -105,7 +108,7 @@ const updateMedia = catchAsync(async (req: Request, res: Response) => {
   if (files?.['file']?.[0]?.path) {
     payload.posterUrl = files['file'][0].path;
   }
-  
+
   if (updateScreenshots) {
     payload.screenshots = [...existingScreenshots, ...newScreenshots];
   }
@@ -132,6 +135,19 @@ const softDeleteMedia = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const playMedia = catchAsync(async (req: Request, res: Response) => {
+  const id = req.params.id as string;
+
+  const streamingUrl = await MediaService.playMedia(id);
+
+  sendResponse(res, {
+    httpStatusCode: status.OK,
+    success: true,
+    message: 'Access granted. Enjoy your media!',
+    data: { streamingUrl: streamingUrl }
+  });
+});
+
 export const MediaController = {
   createMedia,
   getAllMedia,
@@ -139,5 +155,6 @@ export const MediaController = {
   updateMedia,
   softDeleteMedia,
   getMediaById,
-  getAllMediaByAdmin
+  getAllMediaByAdmin,
+  playMedia,
 };

@@ -1,73 +1,73 @@
 // ─── Review ─────────────────────────────────────────────────────────────────
 
 model Review {
-    id            String       @id @default(uuid(7))
-    rating        Int          // 1–10 scale
-    content       String       @db.Text
-    hasSpoiler    Boolean      @default(false)
-    tags          ReviewTag[]  // e.g. ["classic", "underrated", "family-friendly"]
-    status        ReviewStatus @default(PENDING)
-    likesCount    Int          @default(0)
-    commentsCount Int          @default(0)
+  id            String       @id @default(uuid(7))
+  rating        Int // 1–10 scale
+  content       String       @db.Text
+  hasSpoiler    Boolean      @default(false)
+  tags          ReviewTag[] // e.g. ["classic", "underrated", "family-friendly"]
+  status        ReviewStatus @default(PENDING)
+  likesCount    Int          @default(0)
+  commentsCount Int          @default(0)
 
-    userId  String
-    user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-    mediaId String
-    media   Media  @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+  userId  String
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mediaId String
+  media   Media  @relation(fields: [mediaId], references: [id], onDelete: Cascade)
 
-    likes    ReviewLike[]
-    comments Comment[]
+  likes    ReviewLike[]
+  comments Comment[]
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    @@unique([userId, mediaId]) // one review per user per media
-    @@index([mediaId])
-    @@index([userId])
-    @@index([status])
-    @@index([rating])
-    @@map("review")
+  @@unique([userId, mediaId]) // one review per user per media
+  @@index([mediaId])
+  @@index([userId])
+  @@index([status])
+  @@index([rating])
+  @@map("review")
 }
 
 // ─── Review Like ────────────────────────────────────────────────────────────
 
 model ReviewLike {
-    id       String @id @default(uuid(7))
-    userId   String
-    user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-    reviewId String
-    review   Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  id       String @id @default(uuid(7))
+  userId   String
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reviewId String
+  review   Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
 
-    createdAt DateTime @default(now())
+  createdAt DateTime @default(now())
 
-    @@unique([userId, reviewId]) // one like per user per review
-    @@index([reviewId])
-    @@index([userId])
-    @@map("review_like")
+  @@unique([userId, reviewId]) // one like per user per review
+  @@index([reviewId])
+  @@index([userId])
+  @@map("review_like")
 }
 
 // ─── Comment ────────────────────────────────────────────────────────────────
 
 model Comment {
-    id       String @id @default(uuid(7))
-    content  String @db.Text
-    userId   String
-    user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-    reviewId String
-    review   Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  id       String @id @default(uuid(7))
+  content  String @db.Text
+  userId   String
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reviewId String
+  review   Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
 
-    // Self-referencing for nested threads
-    parentId String?
-    parent   Comment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
-    replies  Comment[] @relation("CommentReplies")
+  // Self-referencing for nested threads
+  parentId String?
+  parent   Comment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies  Comment[] @relation("CommentReplies")
 
-    status    CommentStatus @default(APPROVED)
-    isDeleted Boolean  @default(false)
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  status    CommentStatus @default(APPROVED)
+  isDeleted Boolean       @default(false)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
 
-    @@index([reviewId])
-    @@index([userId])
-    @@index([parentId])
-    @@map("comment")
+  @@index([reviewId])
+  @@index([userId])
+  @@index([parentId])
+  @@map("comment")
 }

@@ -297,6 +297,11 @@ export class QueryBuilder<
         return this;
     }
 
+    omit(fields: Record<string, boolean>): this {
+        (this.query as any).omit = fields;
+        return this;
+    }
+
     async execute(): Promise<IQueryResult<T>> {
         const [total, data] = await Promise.all([
             this.model.count(this.countQuery as Parameters<typeof this.model.count>[0]),
