@@ -7,6 +7,7 @@ import { UserRoutes } from '../modules/user/user.route';
 import { WatchlistRoutes } from '../modules/watchlist/watchlist.route';
 import { PaymentRoutes } from '../modules/payment/payment.route';
 import { PurchaseRoutes } from '../modules/purchase/purchase.route';
+import { StatsRoutes } from '../modules/stats/stats.route';
 
 const router = Router();
 
@@ -18,5 +19,6 @@ router.use("/users", UserRoutes);
 router.use("/watchlists", WatchlistRoutes);
 router.use("/payments", PaymentRoutes);
 router.use("/purchases", PurchaseRoutes);
+router.use("/stats", StatsRoutes);
 
 export const IndexRoutes = router;
